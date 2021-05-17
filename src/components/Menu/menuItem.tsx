@@ -5,7 +5,7 @@ import { MenuContext } from './menu'
 
 //定义MenuItemProps接口
 export interface MenuItemProps {
-	index?: number
+	index?: string
 	disabled?: boolean
 	className?: string
 	style?: React.CSSProperties
@@ -25,7 +25,7 @@ const MenuItem: React.FC<MenuItemProps> = (props) => {
 
 	//定义点击事件函数，若onSelect存在且MenuItem非disabled
 	const handleClick = () => {
-		if (context.onSelect && !disabled && typeof index === 'number') {
+		if (context.onSelect && !disabled && typeof index === 'string') {
 			context.onSelect(index)
 		}
 	}

@@ -3,11 +3,11 @@ import classNames from 'classnames'
 import MenuItem, { MenuItemProps } from './menuItem'
 
 type MenuMode = 'horizontal' | 'vertical'
-type selectCallback = (selectedIndex: number) => void
+type selectCallback = (selectedIndex: string) => void
 
 //定义MenuProps接口
 export interface MenuProps {
-	defaultIndex?: number
+	defaultIndex?: string
 	className?: string
 	mode?: MenuMode
 	style?: React.CSSProperties
@@ -16,12 +16,13 @@ export interface MenuProps {
 
 //定义MenuContext接口
 interface IMenuContext {
-	index: number
+	index: string
 	onSelect?: selectCallback
+	mode?: MenuMode
 }
 
 //创建Context容器,给出默认值
-export const MenuContext = createContext<IMenuContext>({ index: 0 })
+export const MenuContext = createContext<IMenuContext>({ index: '0' })
 
 //组件Menu：容器，包含子组件MenuItem
 const Menu: React.FC<MenuProps> = (props) => {
@@ -36,7 +37,7 @@ const Menu: React.FC<MenuProps> = (props) => {
 	})
 
 	//定义传给MenuItem的点击处理函数
-	const handleClick = (index: number) => {
+	const handleClick = (index: string) => {
 		setActive(index)
 		if (onSelect) {
 			onSelect(index)
@@ -45,8 +46,9 @@ const Menu: React.FC<MenuProps> = (props) => {
 
 	//定义要传递的Context
 	const passedContext: IMenuContext = {
-		index: currentActive ? currentActive : 0,
+		index: currentActive ? currentActive : '0',
 		onSelect: handleClick,
+		mode,
 	}
 
 	const renderChildren = () => {
@@ -55,7 +57,7 @@ const Menu: React.FC<MenuProps> = (props) => {
 			const { displayName } = childElement.type
 			if (displayName === 'MenuItem' || displayName === 'SubMenu') {
 				return React.cloneElement(childElement, {
-					index,
+					index: index.toString(),
 				})
 			} else {
 				console.error('Warning：Menu has a child which is not a menuItem')
@@ -71,7 +73,7 @@ const Menu: React.FC<MenuProps> = (props) => {
 }
 
 Menu.defaultProps = {
-	defaultIndex: 0,
+	defaultIndex: '0',
 	mode: 'horizontal',
 }
 
