@@ -10,7 +10,8 @@ const App: React.FC = () => {
 		<div className='App'>
 			<header className='App-header'>
 				<Menu
-					// defaultIndex={0}
+					defaultIndex='0'
+					defaultOpenSubMenus={['2']}
 					mode='vertical'
 					onSelect={(index) => {
 						alert(index)

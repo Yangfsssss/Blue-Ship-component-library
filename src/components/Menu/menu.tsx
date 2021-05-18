@@ -12,6 +12,7 @@ export interface MenuProps {
 	mode?: MenuMode
 	style?: React.CSSProperties
 	onSelect?: selectCallback
+	defaultOpenSubMenus?: string[]
 }
 
 //定义MenuContext接口
@@ -19,6 +20,7 @@ interface IMenuContext {
 	index: string
 	onSelect?: selectCallback
 	mode?: MenuMode
+	defaultOpenSubMenus?: string[]
 }
 
 //创建Context容器,给出默认值
@@ -26,7 +28,7 @@ export const MenuContext = createContext<IMenuContext>({ index: '0' })
 
 //组件Menu：容器，包含子组件MenuItem
 const Menu: React.FC<MenuProps> = (props) => {
-	const { className, mode, style, children, defaultIndex, onSelect } = props
+	const { className, mode, style, children, defaultIndex, onSelect, defaultOpenSubMenus } = props
 
 	//记录当前被选中MenuItem的index
 	const [currentActive, setActive] = useState(defaultIndex)
@@ -49,12 +51,15 @@ const Menu: React.FC<MenuProps> = (props) => {
 		index: currentActive ? currentActive : '0',
 		onSelect: handleClick,
 		mode,
+		defaultOpenSubMenus,
 	}
 
 	const renderChildren = () => {
 		return React.Children.map(children, (child, index) => {
 			const childElement = child as React.FunctionComponentElement<MenuItemProps>
+
 			const { displayName } = childElement.type
+
 			if (displayName === 'MenuItem' || displayName === 'SubMenu') {
 				return React.cloneElement(childElement, {
 					index: index.toString(),
@@ -75,6 +80,7 @@ const Menu: React.FC<MenuProps> = (props) => {
 Menu.defaultProps = {
 	defaultIndex: '0',
 	mode: 'horizontal',
+	defaultOpenSubMenus: [],
 }
 
 MenuItem.displayName = 'MenuItem'

@@ -13,9 +13,11 @@ export interface SubMenuProps {
 const SubMenu: React.FC<SubMenuProps> = (props) => {
 	const { index, title, children, className } = props
 
-	const [menuOpen, setMenuOpen] = useState(false)
-
 	const context = useContext(MenuContext)
+	const openedSubMenus = context.defaultOpenSubMenus as Array<string>
+	const isOpen = index && context.mode === 'vertical' ? openedSubMenus.includes(index) : false
+
+	const [menuOpen, setMenuOpen] = useState(isOpen)
 
 	const classes = classNames('menu-item submenu-item', className, {
 		'is-active': context.index === index,
@@ -54,10 +56,13 @@ const SubMenu: React.FC<SubMenuProps> = (props) => {
 			'menu-opened': menuOpen,
 		})
 
-		const childrenComponent = React.Children.map(children, (child, index) => {
+		const childrenComponent = React.Children.map(children, (child, i) => {
 			const childElement = child as FunctionComponentElement<MenuItemProps>
+
 			if (childElement.type.displayName === 'MenuItem') {
-				return childElement
+				return React.cloneElement(childElement, {
+					index: `${index}-${i}`,
+				})
 			} else {
 				console.error('Warning：SubMenu has a child which is not a menuItem')
 			}
